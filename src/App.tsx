@@ -17,6 +17,9 @@ import { MaintenanceModal } from './components/MaintenanceModal';
 import { RealisticSceneModal } from './components/RealisticSceneModal';
 import { DigitalRoomPassModal } from './components/DigitalRoomPassModal';
 import { PodPersonalizerBar } from './components/PodPersonalizerBar';
+import { SmartLockKeypadModal } from './components/SmartLockKeypadModal';
+import { MealMenuModal } from './components/MealMenuModal';
+import { PowerInverterModal } from './components/PowerInverterModal';
 import { Footer } from './components/Footer';
 
 import {
@@ -26,9 +29,16 @@ import {
   INITIAL_ROOMMATES,
   WARDEN_INFO,
   INITIAL_LEDGER,
+  CAMPUS_FLOORS,
 } from './data/mockData';
 
-import { SpatialLayer, ElevationMode, TimeOfDay, BedCustomization } from './types/coliving';
+import {
+  SpatialLayer,
+  ElevationMode,
+  TimeOfDay,
+  BedCustomization,
+  CampusZone,
+} from './types/coliving';
 import {
   Building2,
   BedDouble,
@@ -38,7 +48,10 @@ import {
   Lock,
   Volume2,
   Sparkles,
-  Eye
+  Eye,
+  Utensils,
+  KeyRound,
+  ShieldCheck,
 } from 'lucide-react';
 
 export default function App() {
@@ -53,7 +66,21 @@ export default function App() {
   const [roommates] = useState(INITIAL_ROOMMATES);
   const [warden] = useState(WARDEN_INFO);
 
-  // Bed Customization & Personalizer state
+  // Multi-Zone & Dimensions
+  const [campusZone, setCampusZone] = useState<CampusZone>('room-529');
+  const [measureMode, setMeasureMode] = useState<boolean>(false);
+  const [selectedMeasurementId, setSelectedMeasurementId] = useState<string>('m-balcony-clearance');
+  const [showFloorGuide, setShowFloorGuide] = useState<boolean>(false);
+
+  // Smart Door Lock state
+  const [isDoorUnlocked, setIsDoorUnlocked] = useState(false);
+  const [isSmartLockModalOpen, setIsSmartLockModalOpen] = useState(false);
+
+  // Meal & Inverter Modals
+  const [isMealMenuOpen, setIsMealMenuOpen] = useState(false);
+  const [isInverterModalOpen, setIsInverterModalOpen] = useState(false);
+
+  // Bed Customization state
   const [bedCustomization, setBedCustomization] = useState<BedCustomization>({
     duvetColor: '#4f46e5',
     duvetName: 'Nordic Indigo',
@@ -63,7 +90,7 @@ export default function App() {
     hydraulicBedLifted: false,
   });
 
-  // Modals
+  // Standard Modals
   const [isBedSwapOpen, setIsBedSwapOpen] = useState(false);
   const [isMaintenanceOpen, setIsMaintenanceOpen] = useState(false);
   const [isRealisticSceneOpen, setIsRealisticSceneOpen] = useState(false);
@@ -107,8 +134,21 @@ export default function App() {
     setRoomRules((prev) => ({ ...prev, ...newRules }));
   };
 
+  const handleDoorUnlocked = () => {
+    setIsDoorUnlocked(true);
+    setTimeout(() => {
+      setIsDoorUnlocked(false);
+    }, 8000);
+  };
+
   const handleOpenPhotoLightbox = (_photoUrl: string, title: string) => {
-    if (title.includes('Balcony')) {
+    if (title.includes('Rooftop') || title.includes('Sky Terrace')) {
+      setRealisticSceneIndex(4);
+    } else if (title.includes('Dining') || title.includes('Mess') || title.includes('Buffet') || title.includes('First Floor')) {
+      setRealisticSceneIndex(3);
+    } else if (title.includes('Building') || title.includes('Cutaway') || title.includes('Isometric')) {
+      setRealisticSceneIndex(5);
+    } else if (title.includes('Balcony')) {
       setRealisticSceneIndex(2);
     } else if (title.includes('Desk') || title.includes('Workstation')) {
       setRealisticSceneIndex(1);
@@ -142,36 +182,173 @@ export default function App() {
             </p>
           </div>
 
-          {/* Room Allocation Info Pills */}
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-            <div className="p-3 bg-white rounded-xl border border-slate-200/90 shadow-xs flex items-center gap-3 min-w-[200px]">
-              <div className="w-9 h-9 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
-                <Building2 className="w-5 h-5" />
+          {/* Quick Hub Badges (Smart Door Keypad, Mess Menu, 360 Rooftop, Scenes) */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <button
+              onClick={() => {
+                setRealisticSceneIndex(4);
+                setIsRealisticSceneOpen(true);
+              }}
+              className="p-2.5 bg-amber-50 hover:bg-amber-100 rounded-xl border border-amber-300 shadow-xs flex items-center gap-2 text-xs font-bold text-amber-900 cursor-pointer transition-all hover:scale-[1.02]"
+              title="Watch 360° Rooftop Sunset Panorama"
+            >
+              <span>🌅</span>
+              <span>Watch 360° Rooftop</span>
+            </button>
+
+            <button
+              onClick={() => setIsRealisticSceneOpen(true)}
+              className="p-2.5 bg-indigo-50 hover:bg-indigo-100 rounded-xl border border-indigo-200 shadow-xs flex items-center gap-2 text-xs font-bold text-indigo-900 cursor-pointer transition-all hover:scale-[1.02]"
+              title="Inspect 6 Architectural Realistic Scenes"
+            >
+              <span>📸</span>
+              <span>Realistic Scenes (6 Views)</span>
+            </button>
+
+            <button
+              onClick={() => setIsSmartLockModalOpen(true)}
+              className="p-2.5 bg-white hover:bg-slate-50 rounded-xl border border-slate-200/90 shadow-xs flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer transition-colors"
+            >
+              <KeyRound className="w-4 h-4 text-cyan-600" />
+              <span>Smart Keypad ({isDoorUnlocked ? 'Open' : 'PIN 8492'})</span>
+            </button>
+
+            <button
+              onClick={() => setIsMealMenuOpen(true)}
+              className="p-2.5 bg-white hover:bg-slate-50 rounded-xl border border-slate-200/90 shadow-xs flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer transition-colors"
+            >
+              <Utensils className="w-4 h-4 text-amber-600" />
+              <span>Chef's Menu (3 Meals)</span>
+            </button>
+
+            <button
+              onClick={() => setIsInverterModalOpen(true)}
+              className="p-2.5 bg-indigo-50/80 hover:bg-indigo-100 rounded-xl border border-indigo-200 shadow-xs flex items-center gap-2 text-xs font-semibold text-indigo-900 cursor-pointer transition-colors"
+            >
+              <Zap className="w-4 h-4 text-amber-500" />
+              <span>Solar Inverter (15kVA)</span>
+            </button>
+          </div>
+        </section>
+
+        {/* Multi-Zone Campus Floor Switcher */}
+        <section className="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-xs space-y-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+              <div className="flex items-center gap-1.5 shrink-0">
+                <span className="w-2.5 h-2.5 rounded-full bg-indigo-600 animate-pulse" />
+                <span className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">
+                  Campus Floor Switcher:
+                </span>
               </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">
-                  PROPERTY & UNIT
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-slate-900">
-                  {ROOM_INFO.property} • Room {ROOM_INFO.roomNumber}
-                </span>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  onClick={() => setCampusZone('building-elevation')}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                    campusZone === 'building-elevation'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200/80'
+                  }`}
+                  title="View 4-Story Building Cutaway Elevation"
+                >
+                  <span>🏢</span>
+                  <span>4-Story Building Cutaway</span>
+                </button>
+                <button
+                  onClick={() => setCampusZone('room-529')}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                    campusZone === 'room-529'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200/80'
+                  }`}
+                  title="View Your Private Allocated Pod Suite"
+                >
+                  <span>🛏️</span>
+                  <span>Floor 2 • Suite 529 (Your Room)</span>
+                </button>
+                <button
+                  onClick={() => setCampusZone('first-floor-dining')}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                    campusZone === 'first-floor-dining'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200/80'
+                  }`}
+                  title="View First Floor Dining Mess Hall & Social Cafe"
+                >
+                  <span>🍲</span>
+                  <span>Floor 1 • Dining Mess Hall (3 Meals)</span>
+                </button>
+                <button
+                  onClick={() => setCampusZone('lounge-pantry')}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                    campusZone === 'lounge-pantry'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200/80'
+                  }`}
+                  title="View 24/7 Co-Working Space and Silent Booths"
+                >
+                  <span>☕</span>
+                  <span>Floor 2 • The Commons Co-Working</span>
+                </button>
+                <button
+                  onClick={() => setCampusZone('rooftop-deck')}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+                    campusZone === 'rooftop-deck'
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200/80'
+                  }`}
+                  title="View Floor 4 Rooftop with 360° Total Panoramic City View"
+                >
+                  <span>🌿</span>
+                  <span>Floor 4 • 360° Rooftop Sky Terrace</span>
+                </button>
               </div>
             </div>
 
-            <div className="p-3 bg-indigo-50/70 rounded-xl border border-indigo-200 shadow-xs flex items-center gap-3 min-w-[200px]">
-              <div className="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0">
-                <BedDouble className="w-5 h-5" />
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-indigo-700 block tracking-wider">
-                  ALLOCATED BED
-                </span>
-                <span className="text-xs sm:text-sm font-bold text-indigo-950">
-                  {beds.find((b) => b.isCurrentUser)?.label || 'Bed B (Window Pod)'}
-                </span>
-              </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setShowFloorGuide(!showFloorGuide)}
+                className="text-xs text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg border border-indigo-200/80 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
+              >
+                <span>ℹ️</span>
+                <span>{showFloorGuide ? 'Hide Floor Guide' : 'What does this Switcher do?'}</span>
+              </button>
             </div>
           </div>
+
+          {/* Expandable Floor Guide & Directory */}
+          {showFloorGuide && (
+            <div className="bg-slate-50 rounded-xl p-3.5 border border-slate-200 text-xs space-y-2 animate-fadeIn">
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-200/80">
+                <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                  <span>🗺️</span>
+                  <span>HomiesInn Campus Directory • How the Multi-Zone Floor Switcher Works</span>
+                </span>
+                <span className="text-[11px] text-slate-500">Interactive 3D WebGL Engine</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 pt-1">
+                {CAMPUS_FLOORS.map((f) => (
+                  <div
+                    key={f.id}
+                    onClick={() => setCampusZone(f.id as CampusZone)}
+                    className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
+                      campusZone === f.id
+                        ? 'bg-indigo-50/90 border-indigo-400 shadow-xs'
+                        : 'bg-white hover:bg-slate-100 border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 mb-1 font-bold text-slate-800">
+                      <span>{f.icon}</span>
+                      <span className="truncate">{f.level}</span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-indigo-600 block mb-1">{f.tag}</span>
+                    <p className="text-[11px] text-slate-600 leading-snug line-clamp-3">{f.description}</p>
+                    <span className="text-[10px] text-slate-400 block mt-1.5 font-medium">{f.stats}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Spatial Layer Selector Bar & Elevation View Mode Controls */}
@@ -311,6 +488,14 @@ export default function App() {
               onTimeOfDayChange={setTimeOfDay}
               bedCustomization={bedCustomization}
               onUpdateCustomization={handleUpdateCustomization}
+              measureMode={measureMode}
+              onToggleMeasureMode={() => setMeasureMode(!measureMode)}
+              selectedMeasurementId={selectedMeasurementId}
+              onSelectMeasurement={setSelectedMeasurementId}
+              isDoorUnlocked={isDoorUnlocked}
+              onOpenSmartLock={() => setIsSmartLockModalOpen(true)}
+              campusZone={campusZone}
+              onCampusZoneChange={setCampusZone}
             />
 
             {/* Pod Personalizer & Ambient Focus Soundscape Bar */}
@@ -357,6 +542,23 @@ export default function App() {
       </main>
 
       {/* Interactive Modals */}
+      <SmartLockKeypadModal
+        isOpen={isSmartLockModalOpen}
+        onClose={() => setIsSmartLockModalOpen(false)}
+        targetKeycode="8492"
+        onDoorUnlocked={handleDoorUnlocked}
+      />
+
+      <MealMenuModal
+        isOpen={isMealMenuOpen}
+        onClose={() => setIsMealMenuOpen(false)}
+      />
+
+      <PowerInverterModal
+        isOpen={isInverterModalOpen}
+        onClose={() => setIsInverterModalOpen(false)}
+      />
+
       <BedSwapModal
         isOpen={isBedSwapOpen}
         onClose={() => setIsBedSwapOpen(false)}

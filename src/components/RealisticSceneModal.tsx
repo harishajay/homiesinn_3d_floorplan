@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { X, Sun, Compass, Maximize2, Sparkles, Volume2, ShieldCheck } from 'lucide-react';
-import { BED_POD_B_PHOTO, BED_POD_DESK_PHOTO, BALCONY_PHOTO } from '../data/mockData';
+import {
+  BED_POD_B_PHOTO,
+  BED_POD_DESK_PHOTO,
+  BALCONY_PHOTO,
+  ROOFTOP_PANORAMIC_PHOTO,
+  FIRST_FLOOR_DINING_PHOTO,
+  BUILDING_ISOMETRIC_PHOTO,
+} from '../data/mockData';
 
 interface RealisticSceneModalProps {
   isOpen: boolean;
@@ -14,6 +21,8 @@ export const RealisticSceneModal: React.FC<RealisticSceneModalProps> = ({
   initialSceneIndex = 0,
 }) => {
   const [activeScene, setActiveScene] = useState(initialSceneIndex);
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const [is360AutoPanning, setIs360AutoPanning] = useState(false);
 
   if (!isOpen) return null;
 
@@ -62,6 +71,51 @@ export const RealisticSceneModal: React.FC<RealisticSceneModalProps> = ({
         'Potted botanical greenery (Fiddle Leaf Fig & Succulents)',
         'Private sunrise coffee & morning contemplation deck'
       ]
+    },
+    {
+      id: 'first-floor-dining',
+      title: 'Floor 1 • Dining Mess Hall & Barista Cafe',
+      subtitle: 'First Floor • Hot Buffet Daily Feast & Social Cafe',
+      photoUrl: FIRST_FLOOR_DINING_PHOTO,
+      lux: '1,200 Lux Warm Hospitality',
+      orientation: 'Ground-Floor Garden View',
+      acoustics: 'Vibrant Social Hub',
+      features: [
+        'Chef-prepared 3 meals daily (South Indian & Continental hot buffet)',
+        'Handcrafted barista espresso bar and organic tea corner',
+        'Long Scandinavian oak communal dining tables fostering community',
+        'Floor-to-ceiling glass wall facing campus tree canopy'
+      ]
+    },
+    {
+      id: 'rooftop-sky-terrace',
+      title: 'Floor 4 • 360° Rooftop Sky Terrace',
+      subtitle: 'Rooftop Sky Deck • Sunset Pergola & Panoramic City Skyline',
+      photoUrl: ROOFTOP_PANORAMIC_PHOTO,
+      lux: 'Golden Hour Sunset Vistas',
+      orientation: '360° Total Panoramic Orbit',
+      acoustics: 'Open Sky Breeze & Firepit',
+      features: [
+        'Total 360-degree unobstructed horizon view over Chennai skyline',
+        'Timber pergola with lush climbing vines and warm amber string festoon bulbs',
+        'Sunken firepit lounge with premium outdoor upholstered sectionals',
+        'Lush artificial turf lawn area for sunrise yoga, lawn games, and stargazing'
+      ]
+    },
+    {
+      id: 'building-isometric',
+      title: 'Campus Isometric Cutaway Elevation',
+      subtitle: '4-Story Architectural Stack • Complete Living Ecosystem',
+      photoUrl: BUILDING_ISOMETRIC_PHOTO,
+      lux: 'Full Campus Elevation',
+      orientation: '4-Story Architectural Stack',
+      acoustics: 'Integrated Sound Insulation',
+      features: [
+        'Ground Floor: Concierge lobby, secure RFID turnstiles, and bike storage',
+        '1st Floor: Community dining mess hall, hot buffet, and social co-living cafe',
+        '2nd Floor: Private Pod Suites (Room 529) with private balconies & en-suites',
+        'Rooftop Floor: 360° Sky Terrace with solar panel inverter bank'
+      ]
     }
   ];
 
@@ -83,12 +137,16 @@ export const RealisticSceneModal: React.FC<RealisticSceneModalProps> = ({
           </div>
 
           {/* Scene selector tabs */}
-          <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl">
+          <div className="flex items-center gap-1 bg-slate-800 p-1 rounded-xl overflow-x-auto max-w-full md:max-w-xl scrollbar-none">
             {scenes.map((s, idx) => (
               <button
                 key={s.id}
-                onClick={() => setActiveScene(idx)}
-                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer ${
+                onClick={() => {
+                  setActiveScene(idx);
+                  setZoomLevel(1);
+                  setIs360AutoPanning(false);
+                }}
+                className={`px-3 py-1 text-xs font-semibold rounded-lg transition-colors cursor-pointer shrink-0 ${
                   activeScene === idx ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -97,7 +155,7 @@ export const RealisticSceneModal: React.FC<RealisticSceneModalProps> = ({
             ))}
           </div>
 
-          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800">
+          <button onClick={onClose} className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -105,16 +163,58 @@ export const RealisticSceneModal: React.FC<RealisticSceneModalProps> = ({
         {/* Content Body: Photo + Spatial Telemetry */}
         <div className="grid grid-cols-1 md:grid-cols-12 max-h-[75vh] overflow-y-auto">
           {/* Main Photo Showcase */}
-          <div className="md:col-span-8 relative bg-black flex items-center justify-center">
+          <div className="md:col-span-8 relative bg-black flex items-center justify-center overflow-hidden min-h-[380px] md:min-h-[500px]">
             <img
               src={current.photoUrl}
               alt={current.title}
               referrerPolicy="no-referrer"
-              className="w-full h-full max-h-[520px] object-cover"
+              className={`w-full h-full max-h-[520px] object-cover transition-all duration-700 ${
+                is360AutoPanning ? 'scale-110 object-right' : ''
+              }`}
+              style={{ transform: `scale(${zoomLevel})` }}
             />
             <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-xs text-white text-xs px-3 py-1.5 rounded-lg border border-white/10 flex items-center gap-2">
               <Sun className="w-3.5 h-3.5 text-amber-400" />
               <span>{current.lux}</span>
+            </div>
+
+            {/* 360 degree pan control badge for rooftop */}
+            {current.id === 'rooftop-sky-terrace' && (
+              <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                <button
+                  onClick={() => setIs360AutoPanning(!is360AutoPanning)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border backdrop-blur-md flex items-center gap-1.5 transition-all cursor-pointer ${
+                    is360AutoPanning
+                      ? 'bg-amber-500 text-slate-950 border-amber-400 shadow-md'
+                      : 'bg-black/70 text-white border-white/20 hover:bg-black/90'
+                  }`}
+                >
+                  <span className="text-base leading-none">🔄</span>
+                  <span>{is360AutoPanning ? 'Auto 360° Pan Active' : 'Watch 360° Total View'}</span>
+                </button>
+                <span className="text-[11px] text-white/80 bg-black/60 px-2 py-1 rounded-md">
+                  Sunset Vista • 360° Horizon
+                </span>
+              </div>
+            )}
+
+            {/* Zoom Controls */}
+            <div className="absolute bottom-4 right-4 flex items-center gap-1 bg-black/60 backdrop-blur-xs p-1 rounded-lg border border-white/10">
+              <button
+                onClick={() => setZoomLevel((z) => Math.max(1, z - 0.25))}
+                className="w-7 h-7 text-xs font-bold text-white hover:bg-white/20 rounded flex items-center justify-center cursor-pointer"
+                title="Zoom Out"
+              >
+                -
+              </button>
+              <span className="text-[11px] text-slate-300 px-1 font-mono">{Math.round(zoomLevel * 100)}%</span>
+              <button
+                onClick={() => setZoomLevel((z) => Math.min(2.5, z + 0.25))}
+                className="w-7 h-7 text-xs font-bold text-white hover:bg-white/20 rounded flex items-center justify-center cursor-pointer"
+                title="Zoom In"
+              >
+                +
+              </button>
             </div>
           </div>
 

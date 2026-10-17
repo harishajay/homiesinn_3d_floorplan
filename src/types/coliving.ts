@@ -4,7 +4,36 @@ export type ElevationMode = 'isometric' | 'exploded' | 'cad' | 'firstperson';
 
 export type TimeOfDay = 'morning' | 'noon' | 'sunset' | 'night';
 
+export type CampusZone = 'room-529' | 'first-floor-dining' | 'lounge-pantry' | 'rooftop-deck' | 'building-elevation';
+
 export type AmbientSoundtrack = 'none' | 'sunrise-breeze' | 'balcony-rain' | 'binaural-study' | 'white-noise';
+
+export interface DimensionMeasurement {
+  id: string;
+  label: string;
+  distanceFt: string;
+  distanceM: string;
+  start: [number, number, number];
+  end: [number, number, number];
+  description: string;
+}
+
+export interface MealItem {
+  id: string;
+  name: string;
+  cuisine: string;
+  type: 'veg' | 'non-veg';
+  calories: string;
+  isSpecial?: boolean;
+}
+
+export interface DayMenu {
+  day: string;
+  date: string;
+  breakfast: { timing: string; items: MealItem[] };
+  lunch: { timing: string; items: MealItem[] };
+  dinner: { timing: string; items: MealItem[] };
+}
 
 export interface BedCustomization {
   duvetColor: string;

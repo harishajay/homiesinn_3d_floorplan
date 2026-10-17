@@ -4,6 +4,57 @@ export const BED_POD_B_PHOTO = '/src/assets/images/bed_pod_b_window_179223401167
 export const BED_POD_DESK_PHOTO = '/src/assets/images/bed_pod_desk_1792234030764.jpg';
 export const BALCONY_PHOTO = '/src/assets/images/balcony_sunrise_1792234048143.jpg';
 export const WARDEN_PHOTO = '/src/assets/images/warden_karthik_1792234064704.jpg';
+export const ROOFTOP_PANORAMIC_PHOTO = '/src/assets/images/rooftop_panoramic_1792239064247.jpg';
+export const FIRST_FLOOR_DINING_PHOTO = '/src/assets/images/first_floor_dining_1792239065215.jpg';
+export const BUILDING_ISOMETRIC_PHOTO = '/src/assets/images/building_isometric_1792239064896.jpg';
+
+export const CAMPUS_FLOORS = [
+  {
+    id: 'building-elevation',
+    name: '4-Story Isometric Building',
+    level: 'Full Stack',
+    icon: '🏢',
+    tag: '3D Cutaway Elevation',
+    description: 'Complete architectural isometric elevation cutaway showing Ground Lobby, 1st Fl Dining, 2nd Fl Suite 529, 3rd Fl Studios, and Rooftop Terrace.',
+    stats: '4 Levels • 42 Residents • 100% Inverter Backup'
+  },
+  {
+    id: 'room-529',
+    name: 'Floor 2 • Suite 529 (Your Room)',
+    level: 'Floor 2',
+    icon: '🛏️',
+    tag: 'Active Residency',
+    description: 'Corner Haven 4X Pod Suite. Allocated Bed Pod B with east morning sun, private en-suite bathroom, smart keylock, workstation, and sunrise balcony.',
+    stats: '432 sq.ft • 4 Pods • Balcony Bay'
+  },
+  {
+    id: 'first-floor-dining',
+    name: 'Floor 1 • Dining Mess Hall & Cafe',
+    level: 'Floor 1',
+    icon: '🍲',
+    tag: '3 Daily Meals Included',
+    description: 'Hot buffet daily feast, barista coffee bar, communal oak tables, and social hangout lounge. Breakfast, lunch, and dinner served daily.',
+    stats: '1,200 sq.ft • 60 Seater • Barista Station'
+  },
+  {
+    id: 'lounge-pantry',
+    name: 'Floor 2 • The Commons Co-Working',
+    level: 'Floor 2 East',
+    icon: '☕',
+    tag: '24/7 Deep Work',
+    description: 'High-speed Wi-Fi 6 mesh workspace, silent calling pods, espresso bar, and collaborative whiteboard tables adjoining the residential wings.',
+    stats: '500 Mbps Mesh • 4 Silent Booths • 24/7 Access'
+  },
+  {
+    id: 'rooftop-deck',
+    name: 'Floor 4 • Rooftop Sky Terrace (360°)',
+    level: 'Rooftop',
+    icon: '🌿',
+    tag: '360° Panoramic View',
+    description: 'Total 360-degree skyline view, wooden timber pergola with warm evening string lights, artificial turf lawn, firepit lounge, and sunset yoga deck.',
+    stats: '1,500 sq.ft • 360° Horizon • Solar Pergola'
+  }
+];
 
 export const ROOM_INFO = {
   property: 'Vadapalani',
@@ -387,3 +438,72 @@ export const INITIAL_CHAT_MESSAGES = [
     isSelf: true
   }
 ];
+
+export const DIMENSION_MEASUREMENTS = [
+  {
+    id: 'm-balcony-clearance',
+    label: 'Bed B to Balcony Clearance',
+    distanceFt: '4.5 ft',
+    distanceM: '1.37 m',
+    start: [3.2, 0.4, 2.1] as [number, number, number],
+    end: [5.6, 0.4, 2.1] as [number, number, number],
+    description: 'Generous unhindered morning walkway to private sunrise terrace'
+  },
+  {
+    id: 'm-desk-width',
+    label: 'Workstation Desk #2 Width',
+    distanceFt: '5.2 ft',
+    distanceM: '1.60 m',
+    start: [2.4, 0.8, 0.6] as [number, number, number],
+    end: [4.0, 0.8, 0.6] as [number, number, number],
+    description: 'Supports dual 27-inch monitors, laptop stand, and organizer'
+  },
+  {
+    id: 'm-ceiling-clearance',
+    label: 'Ceiling Headroom Height',
+    distanceFt: '10.5 ft',
+    distanceM: '3.20 m',
+    start: [3.2, 0.0, 2.1] as [number, number, number],
+    end: [3.2, 3.2, 2.1] as [number, number, number],
+    description: 'Volumetric air circulation with high-clearance overhead feel'
+  },
+  {
+    id: 'm-bed-spacing',
+    label: 'Bed B to Bed C Acoustic Gap',
+    distanceFt: '5.8 ft',
+    distanceM: '1.76 m',
+    start: [3.2, 0.4, 2.1] as [number, number, number],
+    end: [-0.6, 0.4, 2.1] as [number, number, number],
+    description: 'Ample private zone with independent 65W power and lighting'
+  }
+];
+
+export const TODAY_MEALS = {
+  day: 'Saturday',
+  date: '17 October 2026',
+  breakfast: {
+    timing: '07:30 - 10:00 AM',
+    items: [
+      { id: 'b1', name: 'Steamed Ghee Podi Idli & Crispy Medu Vada', cuisine: 'South Indian', type: 'veg' as const, calories: '380 kcal', isSpecial: true },
+      { id: 'b2', name: 'Farm-Fresh Masala Omelette & Toasted Multigrain Bread', cuisine: 'Continental', type: 'non-veg' as const, calories: '410 kcal' },
+      { id: 'b3', name: 'Fresh Filter Coffee & Ragi Malt', cuisine: 'Beverage', type: 'veg' as const, calories: '90 kcal' }
+    ]
+  },
+  lunch: {
+    timing: '12:30 - 02:30 PM',
+    items: [
+      { id: 'l1', name: 'Chettinad Pepper Chicken Curry / Paneer Butter Masala', cuisine: 'South Indian', type: 'non-veg' as const, calories: '580 kcal', isSpecial: true },
+      { id: 'l2', name: 'Steamed Sona Masoori Rice & Thakkali Rasam', cuisine: 'Comfort', type: 'veg' as const, calories: '320 kcal' },
+      { id: 'l3', name: 'Chilled Sweet Cucumber Pachadi & Crispy Appalam', cuisine: 'Side', type: 'veg' as const, calories: '120 kcal' }
+    ]
+  },
+  dinner: {
+    timing: '07:30 - 10:00 PM',
+    items: [
+      { id: 'd1', name: 'Malabar Parotta with Veg Kurma or Kadai Chicken', cuisine: 'Kerala / Coastal', type: 'non-veg' as const, calories: '540 kcal', isSpecial: true },
+      { id: 'd2', name: 'Jeera Basmati Rice & Dal Tadka', cuisine: 'North Indian', type: 'veg' as const, calories: '340 kcal' },
+      { id: 'd3', name: 'Warm Elaneer Payasam (Tender Coconut Dessert)', cuisine: 'Dessert', type: 'veg' as const, calories: '190 kcal' }
+    ]
+  }
+};
+
