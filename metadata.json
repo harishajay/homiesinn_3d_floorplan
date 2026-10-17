@@ -1,0 +1,7 @@
+{
+  "name": "HomiesInn - Spatial Living & 3D Interactive Floorplan",
+  "description": "Explore your allocated room ecosystem, inspect roommate layout, and manage residency perks in real-time with realistic interactive 3D spatial elevations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
