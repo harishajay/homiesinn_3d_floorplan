@@ -1,4 +1,4 @@
-import { BedPod, RoomRules, Roommate, Warden, LivingLedger } from '../types/coliving';
+import { BedPod, RoomRules, Roommate, Warden, LivingLedger, FloorRoom } from '../types/coliving';
 
 export const BED_POD_B_PHOTO = '/src/assets/images/bed_pod_b_window_1792234011674.jpg';
 export const BED_POD_DESK_PHOTO = '/src/assets/images/bed_pod_desk_1792234030764.jpg';
@@ -56,12 +56,60 @@ export const CAMPUS_FLOORS = [
   }
 ];
 
+export const FLOOR_ROOMS: FloorRoom[] = [
+  {
+    id: 'room-201',
+    number: '201',
+    name: 'Room 201 • Triple Sharing Suite (3 Beds)',
+    type: 'triple',
+    bedCount: 3,
+    beds: ['bed-b', 'bed-a', 'bed-c'],
+    sqft: 390,
+    monthlyRent: 5000,
+    description: 'Triple Occupancy Pod Suite. Features 3 private bed pods with dedicated workstation desks, steel RFID lockers, direct morning sunlight, private sunrise balcony, and ensuite bath.',
+    status: 'occupied',
+    color: '#4f46e5',
+    balcony: true,
+    attachedBath: true,
+  },
+  {
+    id: 'room-202',
+    number: '202',
+    name: 'Room 202 • Double Sharing Suite (2 Beds)',
+    type: 'double',
+    bedCount: 2,
+    beds: ['bed-202-a', 'bed-202-b'],
+    sqft: 290,
+    monthlyRent: 7500,
+    description: 'Double Occupancy Premium Twin Suite. 2 spacious bed pods with acoustic partition wall, twin ergonomic desks, individual 450L storage, and attached bathroom.',
+    status: 'partially-available',
+    color: '#0284c7',
+    balcony: true,
+    attachedBath: true,
+  },
+  {
+    id: 'room-203',
+    number: '203',
+    name: 'Room 203 • Single Solo Studio (1 Bed)',
+    type: 'single',
+    bedCount: 1,
+    beds: ['bed-203-solo'],
+    sqft: 220,
+    monthlyRent: 12000,
+    description: 'Private Single-Occupancy Executive Studio. 1 King single pod, executive oak study workstation, private lounge seating, personal mini-bar counter, and ensuite shower.',
+    status: 'occupied',
+    color: '#059669',
+    balcony: true,
+    attachedBath: true,
+  },
+];
+
 export const ROOM_INFO = {
   property: 'Vadapalani',
-  roomNumber: '529',
-  unitType: 'Corner Haven 4X Pod Suite',
-  floor: 'Floor 2 North-East',
-  dimensions: '24 ft × 18 ft (432 sq.ft)',
+  roomNumber: 'Floor 2 (Rooms 201, 202, 203)',
+  unitType: 'Multi-Room Residential Floor (Triple, Double, Single)',
+  floor: 'Floor 2 Residential Wing',
+  dimensions: '68 ft × 36 ft (2,450 sq.ft)',
   ceilingHeight: '10.5 ft',
   hvacSystem: 'Daikin Dual Inverter Smart Dual-Zone 2.0 Ton',
   airQualityStatus: 'Optimized • Filter Cleaned 2d ago',
@@ -72,13 +120,20 @@ export const ROOM_INFO = {
 };
 
 export const INITIAL_BEDS: BedPod[] = [
+  // =====================================
+  // ROOM 201: TRIPLE SHARING (3 BEDS)
+  // =====================================
   {
     id: 'bed-b',
-    name: 'Bed Pod B (Your Bed)',
-    label: 'Bed B (Window Pod)',
+    roomId: 'room-201',
+    roomNumber: '201',
+    roomName: 'Room 201 (Triple Suite)',
+    roomType: 'triple',
+    name: 'Bed 201-B (Your Bed)',
+    label: 'Bed 201-B (Window Pod)',
     residentName: 'Harish Aravind',
     residentRole: 'Software Engineer',
-    residentCompany: 'Resident #529',
+    residentCompany: 'Resident #201-B',
     isCurrentUser: true,
     isAvailable: false,
     bayType: 'Window & Balcony Bay',
@@ -86,9 +141,9 @@ export const INITIAL_BEDS: BedPod[] = [
     noiseLevel: 'Whisper Quiet',
     noiseDb: 32,
     wifiSpeed: '480 Mbps',
-    wifiBand: '5GHz • HomiesInn-Mesh-529',
+    wifiBand: '5GHz • HomiesInn-Mesh-201',
     photoUrl: BED_POD_B_PHOTO,
-    coordinates: { x: 3.2, z: 2.1, rotation: 0 },
+    coordinates: { x: -4.5, z: 2.2, rotation: 0 },
     assets: [
       {
         id: 'asset-desk',
@@ -129,7 +184,7 @@ export const INITIAL_BEDS: BedPod[] = [
       surgeProtection: true
     },
     locker: {
-      number: 'B',
+      number: '201-B',
       keycode: '8492',
       status: 'Locked & Encrypted',
       capacity: '450 Liters (Hydraulic under-bed + vertical wardrobe)'
@@ -137,8 +192,12 @@ export const INITIAL_BEDS: BedPod[] = [
   },
   {
     id: 'bed-a',
-    name: 'Bed Pod A',
-    label: 'Bed A (Study Bay)',
+    roomId: 'room-201',
+    roomNumber: '201',
+    roomName: 'Room 201 (Triple Suite)',
+    roomType: 'triple',
+    name: 'Bed 201-A',
+    label: 'Bed 201-A (Study Bay)',
     residentName: 'Praveen M.',
     residentRole: 'Frontend Dev',
     residentCompany: 'TCS',
@@ -149,9 +208,9 @@ export const INITIAL_BEDS: BedPod[] = [
     noiseLevel: 'Whisper Quiet',
     noiseDb: 34,
     wifiSpeed: '470 Mbps',
-    wifiBand: '5GHz • HomiesInn-Mesh-529',
+    wifiBand: '5GHz • HomiesInn-Mesh-201',
     photoUrl: BED_POD_DESK_PHOTO,
-    coordinates: { x: -3.0, z: -2.4, rotation: 0 },
+    coordinates: { x: -8.0, z: -2.4, rotation: 0 },
     assets: [
       {
         id: 'asset-desk-a',
@@ -191,7 +250,7 @@ export const INITIAL_BEDS: BedPod[] = [
       surgeProtection: true
     },
     locker: {
-      number: 'A',
+      number: '201-A',
       keycode: '••••',
       status: 'Locked',
       capacity: '450 Liters'
@@ -199,8 +258,12 @@ export const INITIAL_BEDS: BedPod[] = [
   },
   {
     id: 'bed-c',
-    name: 'Bed Pod C',
-    label: 'Bed C (Central Pod)',
+    roomId: 'room-201',
+    roomNumber: '201',
+    roomName: 'Room 201 (Triple Suite)',
+    roomType: 'triple',
+    name: 'Bed 201-C',
+    label: 'Bed 201-C (Quiet Alcove)',
     residentName: 'Rohan K.',
     residentRole: 'UI Engineer',
     residentCompany: 'Zoho',
@@ -211,9 +274,9 @@ export const INITIAL_BEDS: BedPod[] = [
     noiseLevel: 'Whisper Quiet',
     noiseDb: 35,
     wifiSpeed: '465 Mbps',
-    wifiBand: '5GHz • HomiesInn-Mesh-529',
+    wifiBand: '5GHz • HomiesInn-Mesh-201',
     photoUrl: BED_POD_DESK_PHOTO,
-    coordinates: { x: -0.6, z: 2.1, rotation: 0 },
+    coordinates: { x: -8.0, z: 2.2, rotation: 0 },
     assets: [
       {
         id: 'asset-desk-c',
@@ -253,74 +316,106 @@ export const INITIAL_BEDS: BedPod[] = [
       surgeProtection: true
     },
     locker: {
-      number: 'C',
+      number: '201-C',
       keycode: '••••',
       status: 'Locked',
       capacity: '450 Liters'
     }
   },
+
+  // =====================================
+  // ROOM 202: DOUBLE SHARING (2 BEDS)
+  // =====================================
   {
-    id: 'bed-d',
-    name: 'Bed Pod D',
-    label: 'Bed Pod D Open',
+    id: 'bed-202-a',
+    roomId: 'room-202',
+    roomNumber: '202',
+    roomName: 'Room 202 (Double Suite)',
+    roomType: 'double',
+    name: 'Bed 202-A',
+    label: 'Bed 202-A (Window Pod)',
+    residentName: 'Vikram S.',
+    residentRole: 'Cloud Architect',
+    residentCompany: 'Amazon Web Services',
+    isCurrentUser: false,
+    isAvailable: false,
+    bayType: 'North Window Bay',
+    sunlightExposure: 'Morning Daylighting (07:30 - 11:00 AM)',
+    noiseLevel: 'Silent Study',
+    noiseDb: 31,
+    wifiSpeed: '490 Mbps',
+    wifiBand: '5GHz • HomiesInn-Mesh-202',
+    photoUrl: BED_POD_DESK_PHOTO,
+    coordinates: { x: -0.5, z: 2.2, rotation: 0 },
+    assets: [
+      { id: 'asset-desk-202a', name: 'Workstation Desk #202-A', detail: 'Oak Workspace', status: 'active', icon: 'desk' },
+      { id: 'asset-locker-202a', name: 'RFID Locker #202-A', detail: 'Locked', status: 'secured', icon: 'lock' },
+      { id: 'asset-hub-202a', name: '65W Type-C Hub', detail: 'Surge Shield', status: 'optimal', icon: 'zap', wattage: 42 }
+    ],
+    powerHub: { status: 'Active (42W)', liveWattage: 42, voltage: '230V AC', usbCType: '65W PD', surgeProtection: true },
+    locker: { number: '202-A', keycode: '••••', status: 'Locked', capacity: '450 Liters' }
+  },
+  {
+    id: 'bed-202-b',
+    roomId: 'room-202',
+    roomNumber: '202',
+    roomName: 'Room 202 (Double Suite)',
+    roomType: 'double',
+    name: 'Bed 202-B (Vacant)',
+    label: 'Bed 202-B (Open Pod)',
     residentName: 'Open Pod',
     residentRole: 'Ready for Move-In',
-    residentCompany: 'Invite a Colleague & Earn ₹1,500',
+    residentCompany: 'Double Sharing • ₹7,500/mo',
     isCurrentUser: false,
     isAvailable: true,
-    bayType: 'Sunrise East Alcove',
-    sunlightExposure: 'Direct Morning Sun (07:00 - 11:30 AM)',
+    bayType: 'Central Study Alcove',
+    sunlightExposure: 'Soft Ambient Daylighting',
     noiseLevel: 'Whisper Quiet',
     noiseDb: 30,
     wifiSpeed: '480 Mbps',
-    wifiBand: '5GHz • HomiesInn-Mesh-529',
+    wifiBand: '5GHz • HomiesInn-Mesh-202',
     photoUrl: BALCONY_PHOTO,
-    coordinates: { x: 3.2, z: -2.4, rotation: 0 },
+    coordinates: { x: 2.2, z: -2.4, rotation: 0 },
     assets: [
-      {
-        id: 'asset-desk-d',
-        name: 'Workstation Desk #4',
-        detail: 'Pristine • Ready for Setup',
-        status: 'active',
-        icon: 'desk'
-      },
-      {
-        id: 'asset-locker-d',
-        name: 'Steel RFID Locker #D',
-        detail: 'Reset & Sanitized for New Resident',
-        status: 'sanitized',
-        icon: 'lock',
-        code: '0000'
-      },
-      {
-        id: 'asset-hub-d',
-        name: '65W Type-C Wall Hub',
-        detail: 'Standby Power Mode',
-        status: 'optimal',
-        icon: 'zap',
-        wattage: 2
-      },
-      {
-        id: 'asset-mattress-d',
-        name: 'Orthopedic 5-Zone Core',
-        detail: 'Fresh Factory Sanitized Seal',
-        status: 'sanitized',
-        icon: 'bed'
-      }
+      { id: 'asset-desk-202b', name: 'Workstation Desk #202-B', detail: 'Sanitized & Ready', status: 'active', icon: 'desk' },
+      { id: 'asset-locker-202b', name: 'RFID Locker #202-B', detail: 'PIN Reset Ready', status: 'sanitized', icon: 'lock', code: '0000' }
     ],
-    powerHub: {
-      status: 'Standby (2W)',
-      liveWattage: 2,
-      voltage: '230V AC',
-      usbCType: '65W PD',
-      surgeProtection: true
-    },
-    locker: {
-      number: 'D',
-      keycode: '0000',
-      status: 'Vacant & Clean',
-      capacity: '450 Liters'
-    }
+    powerHub: { status: 'Standby (0W)', liveWattage: 0, voltage: '230V AC', usbCType: '65W PD', surgeProtection: true },
+    locker: { number: '202-B', keycode: '0000', status: 'Vacant & Clean', capacity: '450 Liters' }
+  },
+
+  // =====================================
+  // ROOM 203: SINGLE SOLO STUDIO (1 BED)
+  // =====================================
+  {
+    id: 'bed-203-solo',
+    roomId: 'room-203',
+    roomNumber: '203',
+    roomName: 'Room 203 (Single Studio)',
+    roomType: 'single',
+    name: 'Bed 203-Solo (Private Studio)',
+    label: 'Bed 203-Solo (Executive King Single)',
+    residentName: 'Ananya R.',
+    residentRole: 'Staff Product Designer',
+    residentCompany: 'Stripe',
+    isCurrentUser: false,
+    isAvailable: false,
+    bayType: 'Private Executive Suite',
+    sunlightExposure: 'All-Day Panoramic Sun & Private Balcony',
+    noiseLevel: 'Ultra Quiet (Acoustic Foam Walls)',
+    noiseDb: 28,
+    wifiSpeed: '520 Mbps',
+    wifiBand: 'Wi-Fi 6 • HomiesInn-Studio-203',
+    photoUrl: BED_POD_B_PHOTO,
+    coordinates: { x: 7.2, z: 0.2, rotation: 0 },
+    assets: [
+      { id: 'asset-desk-203', name: 'Executive Oak Desk', detail: 'Dual 27-inch Ergonomic Mount', status: 'active', icon: 'desk' },
+      { id: 'asset-lounge-203', name: 'Bouclé Lounge Armchair', detail: 'Private Relaxation Nook', status: 'optimal', icon: 'sparkles' },
+      { id: 'asset-locker-203', name: 'Floor-to-Ceiling Wardrobe', detail: 'Electronic RFID Lock', status: 'secured', icon: 'lock' },
+      { id: 'asset-hub-203', name: '100W GaN Charging Station', detail: 'Type-C PD & Wireless Pad', status: 'optimal', icon: 'zap', wattage: 54 }
+    ],
+    powerHub: { status: 'Active (54W)', liveWattage: 54, voltage: '230V AC', usbCType: '100W GaN PD 3.1', surgeProtection: true },
+    locker: { number: '203-Solo', keycode: '••••', status: 'Locked & Encrypted', capacity: '750 Liters' }
   }
 ];
 

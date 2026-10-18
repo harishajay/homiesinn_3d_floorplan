@@ -62,8 +62,30 @@ export interface RoomAsset {
   wattage?: number;
 }
 
+export type RoomType = 'triple' | 'double' | 'single';
+
+export interface FloorRoom {
+  id: string; // 'room-201' | 'room-202' | 'room-203'
+  number: string;
+  name: string;
+  type: RoomType;
+  bedCount: number; // 3, 2, or 1
+  beds: string[];
+  sqft: number;
+  monthlyRent: number;
+  description: string;
+  status: 'occupied' | 'partially-available' | 'available';
+  color: string;
+  balcony: boolean;
+  attachedBath: boolean;
+}
+
 export interface BedPod {
-  id: string; // 'bed-a' | 'bed-b' | 'bed-c' | 'bed-d'
+  id: string; // 'bed-a' | 'bed-b' | 'bed-c' | etc.
+  roomId: string; // 'room-201' | 'room-202' | 'room-203'
+  roomNumber: string; // '201' | '202' | '203'
+  roomName: string;
+  roomType: RoomType;
   name: string;
   label: string;
   residentName?: string;

@@ -461,62 +461,18 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
     suiteGroup.clear();
     scene.add(suiteGroup);
 
-    // Floor Base
+    // Floor Base (housing Room 201, Room 202, Room 203 side-by-side on one floor)
     const floorMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(11.2, 0.3, 8.4),
+      new THREE.BoxGeometry(22.0, 0.35, 10.0),
       new THREE.MeshStandardMaterial({ map: woodTexture, roughness: 0.45, metalness: 0.05 })
     );
-    floorMesh.position.set(0, -0.15, 0);
+    floorMesh.position.set(0, -0.175, 0);
     floorMesh.receiveShadow = true;
     suiteGroup.add(floorMesh);
 
     // Walls
     const wallMat = new THREE.MeshStandardMaterial({ color: 0xedf0f5, roughness: 0.85 });
     const doorFrameMat = new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.4 });
-
-    const backWall = new THREE.Mesh(new THREE.BoxGeometry(11.4, 2.2, 0.3), wallMat);
-    backWall.position.set(0, 1.0, -4.2);
-    backWall.receiveShadow = true;
-    suiteGroup.add(backWall);
-
-    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.3, 2.2, 8.4), wallMat);
-    leftWall.position.set(-5.6, 1.0, 0);
-    leftWall.receiveShadow = true;
-    suiteGroup.add(leftWall);
-
-    // Hinged Door
-    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.35, 2.0, 1.2), doorFrameMat);
-    doorFrame.position.set(-5.6, 0.9, -1.2);
-    suiteGroup.add(doorFrame);
-
-    const doorPivot = new THREE.Group();
-    doorPivot.position.set(-5.55, 0.9, -1.75);
-    doorPivotRef.current = doorPivot;
-
-    const doorLeaf = new THREE.Mesh(
-      new THREE.BoxGeometry(0.08, 1.9, 1.1),
-      new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.4 })
-    );
-    doorLeaf.position.set(0, 0, 0.55);
-    doorPivot.add(doorLeaf);
-    suiteGroup.add(doorPivot);
-
-    // RFID Scanner
-    const rfidBox = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.25, 0.16), doorFrameMat);
-    rfidBox.position.set(-5.4, 1.1, -0.4);
-    const rfidLed = new THREE.Mesh(
-      new THREE.SphereGeometry(0.03, 8, 8),
-      new THREE.MeshBasicMaterial({ color: 0x10b981 })
-    );
-    rfidLed.position.set(0.07, 0.05, 0);
-    rfidBox.add(rfidLed);
-    suiteGroup.add(rfidBox);
-    interactiveMeshesRef.current.push({
-      mesh: rfidBox,
-      id: 'access-portal',
-      name: 'Smart Access Portal (Click to Test Lock)',
-    });
-
     const glassMat = new THREE.MeshPhysicalMaterial({
       color: 0xdaf0f7,
       transmission: 0.85,
@@ -526,43 +482,126 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
       thickness: 0.4,
     });
 
-    // Ensuite Bath Glass
-    const bathWall = new THREE.Mesh(new THREE.BoxGeometry(2.9, 1.8, 0.08), glassMat);
-    bathWall.position.set(-4.0, 0.9, -1.7);
-    suiteGroup.add(bathWall);
+    // Back Corridor Wall
+    const backWall = new THREE.Mesh(new THREE.BoxGeometry(22.2, 2.2, 0.25), wallMat);
+    backWall.position.set(0, 1.0, -4.9);
+    backWall.receiveShadow = true;
+    suiteGroup.add(backWall);
 
-    // Sunrise Balcony
-    const balconyFloor = new THREE.Mesh(
-      new THREE.BoxGeometry(2.4, 0.25, 4.2),
-      new THREE.MeshStandardMaterial({ color: 0xd4c5b3, roughness: 0.7 })
-    );
-    balconyFloor.position.set(6.7, -0.16, 1.8);
-    balconyFloor.receiveShadow = true;
-    suiteGroup.add(balconyFloor);
+    // Outer Left and Right Exterior Walls
+    const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.2, 10.0), wallMat);
+    leftWall.position.set(-11.0, 1.0, 0);
+    const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.25, 2.2, 10.0), wallMat);
+    rightWall.position.set(11.0, 1.0, 0);
+    suiteGroup.add(leftWall, rightWall);
 
-    const railingGlass = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 4.2), glassMat);
-    railingGlass.position.set(7.85, 0.45, 1.8);
-    suiteGroup.add(railingGlass);
+    // ========================================================
+    // INTERNAL DIVIDING PARTITION WALLS (SEPARATING 3 ROOMS)
+    // ========================================================
+    // Partition 1: Separates Room 201 (Triple) and Room 202 (Double)
+    const partition1 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.2, 9.6), wallMat);
+    partition1.position.set(-2.4, 1.0, 0);
+    partition1.receiveShadow = true;
+    suiteGroup.add(partition1);
 
-    const bistroTable = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.35, 0.35, 0.6, 16),
-      new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 })
-    );
-    bistroTable.position.set(6.8, 0.3, 1.8);
-    suiteGroup.add(bistroTable);
+    // Partition 2: Separates Room 202 (Double) and Room 203 (Single Studio)
+    const partition2 = new THREE.Mesh(new THREE.BoxGeometry(0.2, 2.2, 9.6), wallMat);
+    partition2.position.set(4.4, 1.0, 0);
+    partition2.receiveShadow = true;
+    suiteGroup.add(partition2);
 
-    const pot = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.2, 0.15, 0.35, 12),
-      new THREE.MeshStandardMaterial({ color: 0xbe5a38, roughness: 0.9 })
+    // ========================================================
+    // 3 ACCESS DOORS WITH SMART RFID READERS ALONG CORRIDOR
+    // ========================================================
+    // Door 1: Room 201 Entrance (Triple Suite)
+    const doorFrame1 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.0, 0.28), doorFrameMat);
+    doorFrame1.position.set(-6.5, 0.9, -4.85);
+    suiteGroup.add(doorFrame1);
+
+    const doorPivot = new THREE.Group();
+    doorPivot.position.set(-7.05, 0.9, -4.85);
+    doorPivotRef.current = doorPivot;
+    const doorLeaf = new THREE.Mesh(
+      new THREE.BoxGeometry(1.0, 1.9, 0.08),
+      new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.4 })
     );
-    pot.position.set(7.4, 0.18, 3.4);
-    const plantLeaves = new THREE.Mesh(
-      new THREE.DodecahedronGeometry(0.28),
-      new THREE.MeshStandardMaterial({ color: 0x227b4b, roughness: 0.7 })
-    );
-    plantLeaves.position.set(0, 0.28, 0);
-    pot.add(plantLeaves);
-    suiteGroup.add(pot);
+    doorLeaf.position.set(0.5, 0, 0);
+    doorPivot.add(doorLeaf);
+    suiteGroup.add(doorPivot);
+
+    const rfidBox1 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.25, 0.1), doorFrameMat);
+    rfidBox1.position.set(-5.7, 1.1, -4.75);
+    const rfidLed1 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0x10b981 }));
+    rfidLed1.position.set(0, 0.05, 0.06);
+    rfidBox1.add(rfidLed1);
+    suiteGroup.add(rfidBox1);
+    interactiveMeshesRef.current.push({ mesh: rfidBox1, id: 'access-portal', name: 'Room 201 Smart Lock (Click to Unlock)' });
+
+    // Door 2: Room 202 Entrance (Double Suite)
+    const doorFrame2 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.0, 0.28), doorFrameMat);
+    doorFrame2.position.set(0.8, 0.9, -4.85);
+    const doorLeaf2 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.9, 0.08), new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.4 }));
+    doorLeaf2.position.set(0.8, 0.9, -4.85);
+    const rfidBox2 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.25, 0.1), doorFrameMat);
+    rfidBox2.position.set(1.6, 1.1, -4.75);
+    const rfidLed2 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0x0284c7 }));
+    rfidLed2.position.set(0, 0.05, 0.06);
+    rfidBox2.add(rfidLed2);
+    suiteGroup.add(doorFrame2, doorLeaf2, rfidBox2);
+    interactiveMeshesRef.current.push({ mesh: rfidBox2, id: 'access-portal-202', name: 'Room 202 Smart Keypad' });
+
+    // Door 3: Room 203 Entrance (Single Solo Studio)
+    const doorFrame3 = new THREE.Mesh(new THREE.BoxGeometry(1.2, 2.0, 0.28), doorFrameMat);
+    doorFrame3.position.set(7.6, 0.9, -4.85);
+    const doorLeaf3 = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.9, 0.08), new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.4 }));
+    doorLeaf3.position.set(7.6, 0.9, -4.85);
+    const rfidBox3 = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.25, 0.1), doorFrameMat);
+    rfidBox3.position.set(8.4, 1.1, -4.75);
+    const rfidLed3 = new THREE.Mesh(new THREE.SphereGeometry(0.025, 8, 8), new THREE.MeshBasicMaterial({ color: 0x059669 }));
+    rfidLed3.position.set(0, 0.05, 0.06);
+    rfidBox3.add(rfidLed3);
+    suiteGroup.add(doorFrame3, doorLeaf3, rfidBox3);
+    interactiveMeshesRef.current.push({ mesh: rfidBox3, id: 'access-portal-203', name: 'Room 203 Solo Studio Keypad' });
+
+    // ========================================================
+    // ENSUITE BATHROOMS FOR EACH ROOM
+    // ========================================================
+    // Room 201 Bath Glass
+    const bath1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.8, 0.08), glassMat);
+    bath1.position.set(-9.6, 0.9, -3.2);
+    // Room 202 Bath Glass
+    const bath2 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.8, 0.08), glassMat);
+    bath2.position.set(3.1, 0.9, -3.2);
+    // Room 203 Bath Glass
+    const bath3 = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.8, 0.08), glassMat);
+    bath3.position.set(9.6, 0.9, -3.2);
+    suiteGroup.add(bath1, bath2, bath3);
+
+    // ========================================================
+    // BALCONIES & WINDOW BAYS FOR EACH ROOM
+    // ========================================================
+    // Room 201 Sunrise Balcony (Left)
+    const balconyFloor1 = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.22, 2.6), new THREE.MeshStandardMaterial({ color: 0xd4c5b3, roughness: 0.7 }));
+    balconyFloor1.position.set(-4.5, -0.16, 5.8);
+    const railingGlass1 = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.9, 0.06), glassMat);
+    railingGlass1.position.set(-4.5, 0.45, 7.05);
+    const bistroTable1 = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.6, 16), new THREE.MeshStandardMaterial({ color: 0x334155, roughness: 0.5 }));
+    bistroTable1.position.set(-4.5, 0.3, 5.8);
+    suiteGroup.add(balconyFloor1, railingGlass1, bistroTable1);
+
+    // Room 202 Front Window View (Center)
+    const window202 = new THREE.Mesh(new THREE.BoxGeometry(6.6, 0.9, 0.06), glassMat);
+    window202.position.set(1.0, 0.45, 5.0);
+    suiteGroup.add(window202);
+
+    // Room 203 Private Executive Balcony (Right)
+    const balconyFloor3 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.22, 2.6), new THREE.MeshStandardMaterial({ color: 0xd4c5b3, roughness: 0.7 }));
+    balconyFloor3.position.set(7.2, -0.16, 5.8);
+    const railingGlass3 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.9, 0.06), glassMat);
+    railingGlass3.position.set(7.2, 0.45, 7.05);
+    const outdoorChair3 = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), new THREE.MeshStandardMaterial({ color: 0x059669 }));
+    outdoorChair3.position.set(7.2, 0.25, 5.8);
+    suiteGroup.add(balconyFloor3, railingGlass3, outdoorChair3);
 
     // Bed Pods
     const bedWoodMat = new THREE.MeshStandardMaterial({ color: 0xc49b71, roughness: 0.4 });
@@ -702,32 +741,59 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
       return deskGroup;
     };
 
-    suiteGroup.add(createWorkstation(-3.0, -0.8, 0));
-    suiteGroup.add(createWorkstation(3.2, 0.6, Math.PI));
+    // Desks for all 3 rooms
+    // Room 201 (Triple): 3 Workstation study desks
+    suiteGroup.add(createWorkstation(-8.0, 0.4, 0));
+    suiteGroup.add(createWorkstation(-4.5, 0.4, Math.PI)); // Harish's Desk #2
+    suiteGroup.add(createWorkstation(-6.2, -0.6, 0));
 
-    // Lockers
-    const lockerBank = new THREE.Mesh(
+    // Room 202 (Double): 2 Workstation study desks
+    suiteGroup.add(createWorkstation(-0.5, 0.4, Math.PI));
+    suiteGroup.add(createWorkstation(2.2, 0.4, 0));
+
+    // Room 203 (Single Solo Studio): Executive oak workspace
+    suiteGroup.add(createWorkstation(7.2, -1.6, 0));
+
+    // Lockers for Room 201 (Triple)
+    const lockerBank1 = new THREE.Mesh(
       new THREE.BoxGeometry(2.4, 2.0, 0.65),
       new THREE.MeshStandardMaterial({ color: 0x3b82f6, metalness: 0.6, roughness: 0.35 })
     );
-    lockerBank.position.set(-1.8, 1.0, -3.8);
-    suiteGroup.add(lockerBank);
+    lockerBank1.position.set(-7.8, 1.0, -4.2);
 
-    // AC Unit
-    const acMesh = new THREE.Mesh(
-      new THREE.BoxGeometry(1.4, 0.35, 0.3),
-      new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 })
+    // Lockers for Room 202 (Double)
+    const lockerBank2 = new THREE.Mesh(
+      new THREE.BoxGeometry(1.6, 2.0, 0.65),
+      new THREE.MeshStandardMaterial({ color: 0x0284c7, metalness: 0.6, roughness: 0.35 })
     );
-    acMesh.position.set(1.5, 1.9, -4.0);
-    suiteGroup.add(acMesh);
+    lockerBank2.position.set(0.8, 1.0, -4.2);
+
+    // Wardrobe for Room 203 (Single)
+    const wardrobe3 = new THREE.Mesh(
+      new THREE.BoxGeometry(1.2, 2.1, 0.65),
+      new THREE.MeshStandardMaterial({ color: 0x059669, metalness: 0.5, roughness: 0.4 })
+    );
+    wardrobe3.position.set(7.6, 1.05, -4.2);
+    suiteGroup.add(lockerBank1, lockerBank2, wardrobe3);
+
+    // Daikin Inverter AC Units for each room
+    const createAC = (x: number) => {
+      const ac = new THREE.Mesh(
+        new THREE.BoxGeometry(1.4, 0.35, 0.3),
+        new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.2 })
+      );
+      ac.position.set(x, 1.9, -4.6);
+      return ac;
+    };
+    suiteGroup.add(createAC(-5.5), createAC(1.0), createAC(7.5));
 
     // Electrical Layer
     const electricalGroup = electricalLayerGroup.current;
     electricalGroup.clear();
     const conduitMat = new THREE.MeshStandardMaterial({ color: 0x38bdf8, emissive: 0x0284c7, emissiveIntensity: 0.9 });
-    const c1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 11.0, 8), conduitMat);
+    const c1 = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 21.0, 8), conduitMat);
     c1.rotation.z = Math.PI / 2;
-    c1.position.set(0, 0.04, -4.05);
+    c1.position.set(0, 0.04, -4.6);
     electricalGroup.add(c1);
     suiteGroup.add(electricalGroup);
 
@@ -735,10 +801,10 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
     const sunlightGroup = sunlightLayerGroup.current;
     sunlightGroup.clear();
     const sunBeam = new THREE.Mesh(
-      new THREE.CylinderGeometry(1.6, 3.2, 7.0, 16, 1, true),
+      new THREE.CylinderGeometry(1.8, 3.6, 7.5, 16, 1, true),
       new THREE.MeshBasicMaterial({ color: 0xffe6a3, transparent: true, opacity: 0.18, side: THREE.DoubleSide })
     );
-    sunBeam.position.set(4.5, 2.0, 1.8);
+    sunBeam.position.set(-3.5, 2.0, 2.8);
     sunBeam.rotation.z = -Math.PI / 4;
     sunBeam.rotation.y = Math.PI / 6;
     sunlightGroup.add(sunBeam);
@@ -746,7 +812,7 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
     const particleCount = 70;
     const particlePositions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
-      particlePositions[i * 3] = 1.5 + (Math.random() - 0.5) * 1.8;
+      particlePositions[i * 3] = -4.5 + (Math.random() - 0.5) * 5.0;
       particlePositions[i * 3 + 1] = 1.8 - Math.random() * 1.5;
       particlePositions[i * 3 + 2] = -3.8 + Math.random() * 5.5;
     }
@@ -767,7 +833,7 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
       new THREE.BoxGeometry(2.3, 0.35, 1.3),
       new THREE.MeshStandardMaterial({ color: 0x8b5cf6, emissive: 0x7c3aed, emissiveIntensity: 0.5, transparent: true, opacity: 0.45 })
     );
-    hydraulicVolume.position.set(3.2, 0.45, 2.1);
+    hydraulicVolume.position.set(-4.5, 0.45, 2.2);
     storageGroup.add(hydraulicVolume);
     suiteGroup.add(storageGroup);
 
@@ -780,7 +846,7 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
         new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.35 / i, side: THREE.DoubleSide })
       );
       ring.rotation.x = -Math.PI / 2;
-      ring.position.set(3.2, 0.03, 2.1);
+      ring.position.set(-4.5, 0.03, 2.2);
       acousticGroup.add(ring);
     }
     suiteGroup.add(acousticGroup);
@@ -1144,31 +1210,67 @@ export const SpatialFloorplan3D: React.FC<SpatialFloorplan3DProps> = ({
         buildingElevationGroup.add(frontGlass);
       }
 
-      // Special highlight for Floor 2 (Harish's Suite 529 & Bed B!)
+      // Special highlight for Floor 2 (3 Rooms: Triple [3 Beds], Double [2 Beds], Single [1 Bed])
       if (fl.isCurrentFloor) {
-        // Glowing Indicator Halo on Floor 2
+        // Dividing Partitions on Floor 2 Cutaway
+        const cutawayPart1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.6, 8.8), wallExteriorMat);
+        cutawayPart1.position.set(-1.8, fl.y + 1.3, 0);
+        const cutawayPart2 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 2.6, 8.8), wallExteriorMat);
+        cutawayPart2.position.set(2.4, fl.y + 1.3, 0);
+        buildingElevationGroup.add(cutawayPart1, cutawayPart2);
+
+        // ROOM 201 (Triple Suite: 3 Beds) - Left Section
+        const r201BedMat = new THREE.MeshStandardMaterial({ color: 0x4f46e5 });
+        const bedMock1 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.35, 1.0), r201BedMat);
+        bedMock1.position.set(-4.8, fl.y + 0.25, -1.8);
+        const bedMock2 = new THREE.Mesh(
+          new THREE.BoxGeometry(1.6, 0.35, 1.0),
+          new THREE.MeshStandardMaterial({ color: 0x6366f1, emissive: 0x312e81, emissiveIntensity: 0.5 })
+        ); // Harish's Bed 201-B
+        bedMock2.position.set(-4.8, fl.y + 0.25, 1.8);
+        const bedMock3 = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.35, 1.0), r201BedMat);
+        bedMock3.position.set(-2.8, fl.y + 0.25, 0);
+        buildingElevationGroup.add(bedMock1, bedMock2, bedMock3);
+
+        // Glowing indicator halo on Harish's Bed B
         const indicatorHalo = new THREE.Mesh(
-          new THREE.RingGeometry(1.6, 2.2, 32),
+          new THREE.RingGeometry(1.0, 1.3, 24),
           new THREE.MeshBasicMaterial({ color: 0x6366f1, side: THREE.DoubleSide })
         );
         indicatorHalo.rotation.x = -Math.PI / 2;
-        indicatorHalo.position.set(3.2, fl.y + 0.1, 2.0);
+        indicatorHalo.position.set(-4.8, fl.y + 0.05, 1.8);
         buildingElevationGroup.add(indicatorHalo);
 
-        // Bed Mock on Floor 2
-        const bedMock = new THREE.Mesh(
-          new THREE.BoxGeometry(2.2, 0.4, 1.3),
-          new THREE.MeshStandardMaterial({ color: 0x4f46e5 })
-        );
-        bedMock.position.set(3.2, fl.y + 0.35, 2.0);
-        buildingElevationGroup.add(bedMock);
+        // Balcony for Room 201
+        const balconySlab1 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 2.6), concreteFloorMat);
+        balconySlab1.position.set(-7.5, fl.y, 1.5);
+        const balconyGlass1 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 2.6), glassMat);
+        balconyGlass1.position.set(-8.35, fl.y + 0.45, 1.5);
+        buildingElevationGroup.add(balconySlab1, balconyGlass1);
 
-        // Floor 2 Balcony Projection
-        const balconySlab = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.2, 3.6), concreteFloorMat);
-        balconySlab.position.set(7.5, fl.y, 1.8);
-        const balconyGlass = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 3.6), glassMat);
-        balconyGlass.position.set(8.65, fl.y + 0.45, 1.8);
-        buildingElevationGroup.add(balconySlab, balconyGlass);
+        // ROOM 202 (Double Suite: 2 Beds) - Center Section
+        const r202BedMat = new THREE.MeshStandardMaterial({ color: 0x0284c7 });
+        const bedMock202A = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.35, 1.0), r202BedMat);
+        bedMock202A.position.set(0.3, fl.y + 0.25, -1.8);
+        const bedMock202B = new THREE.Mesh(
+          new THREE.BoxGeometry(1.6, 0.35, 1.0),
+          new THREE.MeshStandardMaterial({ color: 0x10b981, emissive: 0x064e3b, emissiveIntensity: 0.3 })
+        ); // Available Bed 202-B
+        bedMock202B.position.set(0.3, fl.y + 0.25, 1.8);
+        buildingElevationGroup.add(bedMock202A, bedMock202B);
+
+        // ROOM 203 (Single Solo Studio: 1 Bed) - Right Section
+        const r203BedMat = new THREE.MeshStandardMaterial({ color: 0x059669 });
+        const bedMock203 = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.38, 1.3), r203BedMat); // King single
+        bedMock203.position.set(4.5, fl.y + 0.25, 0.5);
+        buildingElevationGroup.add(bedMock203);
+
+        // Private Balcony for Room 203
+        const balconySlab3 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.2, 2.8), concreteFloorMat);
+        balconySlab3.position.set(7.5, fl.y, 0.5);
+        const balconyGlass3 = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.9, 2.8), glassMat);
+        balconyGlass3.position.set(8.35, fl.y + 0.45, 0.5);
+        buildingElevationGroup.add(balconySlab3, balconyGlass3);
       }
 
       // Rooftop Details on Top Floor
